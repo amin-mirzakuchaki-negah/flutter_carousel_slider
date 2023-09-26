@@ -16,6 +16,8 @@ export 'carousel_options.dart';
 typedef Widget ExtendedIndexedWidgetBuilder(
     BuildContext context, int index, int realIndex);
 
+typedef OffsetChangeListener = void Function(double offset);
+
 class CarouselSlider extends StatefulWidget {
   /// [CarouselOptions] to create a [CarouselState] with
   final CarouselOptions options;
@@ -35,10 +37,15 @@ class CarouselSlider extends StatefulWidget {
 
   final int? itemCount;
 
+  final Function(PageController? controller)? onPageControllerUpdated;
+  final OffsetChangeListener? offsetChangeListener;
+
   CarouselSlider(
       {required this.items,
       required this.options,
       this.disableGesture,
+      this.onPageControllerUpdated,
+      this.offsetChangeListener,
       CarouselController? carouselController,
       Key? key})
       : itemBuilder = null,
@@ -54,6 +61,8 @@ class CarouselSlider extends StatefulWidget {
       required this.itemBuilder,
       required this.options,
       this.disableGesture,
+      this.onPageControllerUpdated,
+      this.offsetChangeListener,
       CarouselController? carouselController,
       Key? key})
       : items = null,
@@ -86,6 +95,11 @@ class CarouselSliderState extends State<CarouselSlider>
     mode = _mode;
   }
 
+  void _listener() {
+    final offset = pageController?.page ?? 0;
+    widget.offsetChangeListener?.call(offset % 1);
+  }
+
   @override
   void didUpdateWidget(CarouselSlider oldWidget) {
     carouselState!.options = options;
@@ -96,6 +110,8 @@ class CarouselSliderState extends State<CarouselSlider>
       viewportFraction: options.viewportFraction,
       initialPage: carouselState!.realPage,
     );
+    widget.onPageControllerUpdated?.call(pageController);
+    pageController?.addListener(_listener);
     carouselState!.pageController = pageController;
 
     // handle autoplay when state changes
@@ -122,7 +138,9 @@ class CarouselSliderState extends State<CarouselSlider>
       viewportFraction: options.viewportFraction,
       initialPage: carouselState!.realPage,
     );
+    widget.onPageControllerUpdated?.call(pageController);
 
+    pageController?.addListener(_listener);
     carouselState!.pageController = pageController;
   }
 
@@ -355,7 +373,7 @@ class CarouselSliderState extends State<CarouselSlider>
                 BuildContext storageContext = carouselState!
                     .pageController!.position.context.storageContext;
                 final double? previousSavedPosition =
-                    PageStorage.of(storageContext)?.readState(storageContext)
+                    PageStorage.of(storageContext).readState(storageContext)
                         as double?;
                 if (previousSavedPosition != null) {
                   itemOffset = previousSavedPosition - idx.toDouble();
