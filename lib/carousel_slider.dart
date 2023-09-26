@@ -97,8 +97,11 @@ class CarouselSliderState extends State<CarouselSlider>
 
   void _listener() {
     final offset = pageController?.page ?? 0;
+    final length = (widget.itemCount ?? widget.items?.length ?? 1);
+    final mOffset = offset % length;
+    final rOffset = mOffset > length - 1 ? length - mOffset : mOffset;
     widget.offsetChangeListener?.call(
-      offset % (widget.itemCount ?? widget.items?.length ?? 1),
+      rOffset,
       offset,
     );
   }

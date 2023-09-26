@@ -49,7 +49,7 @@ class _CarouselDemoHomeState extends State<CarouselDemoHome> {
           //   _controller?.addListener(_listener);
           // },
           offsetChangeListener: (offset, original) {
-            print(offset);
+            print('$offset, $original');
           },
           options: CarouselOptions(
             aspectRatio: 1,
