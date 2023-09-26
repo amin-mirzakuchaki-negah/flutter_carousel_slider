@@ -48,7 +48,7 @@ class _CarouselDemoHomeState extends State<CarouselDemoHome> {
           //   _controller = controller;
           //   _controller?.addListener(_listener);
           // },
-          offsetChangeListener: (offset) {
+          offsetChangeListener: (offset, original) {
             print(offset);
           },
           options: CarouselOptions(

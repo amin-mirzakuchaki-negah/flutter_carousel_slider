@@ -16,7 +16,7 @@ export 'carousel_options.dart';
 typedef Widget ExtendedIndexedWidgetBuilder(
     BuildContext context, int index, int realIndex);
 
-typedef OffsetChangeListener = void Function(double offset);
+typedef OffsetChangeListener = void Function(double offset, double original);
 
 class CarouselSlider extends StatefulWidget {
   /// [CarouselOptions] to create a [CarouselState] with
@@ -97,7 +97,10 @@ class CarouselSliderState extends State<CarouselSlider>
 
   void _listener() {
     final offset = pageController?.page ?? 0;
-    widget.offsetChangeListener?.call(offset % 1);
+    widget.offsetChangeListener?.call(
+      offset % (widget.itemCount ?? widget.items?.length ?? 1),
+      offset,
+    );
   }
 
   @override
